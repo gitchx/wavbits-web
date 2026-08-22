@@ -18,3 +18,11 @@ GitHub の `production` Environment に次の Secrets を設定してくださ�
 - `VPS_USER`: SSH 接続ユーザー（`deploy-vps.sh` をパスワードなしで `sudo` 実行できること）
 - `VPS_SSH_PRIVATE_KEY`: SSH 秘密鍵
 - `VPS_SSH_KNOWN_HOSTS`: VPS の検証済み known_hosts エントリ
+
+### Manual deployment
+
+GitHub Actions の設定完了前に手動で反映する場合は、リポジトリのルートで次を実行します。途中でVPSのsudoパスワード入力を求められます。
+
+```bash
+bash manual-deploy.sh
+```
