@@ -10,6 +10,8 @@ on:
       - package.json
       - package-lock.json
       - deploy-vps.sh
+      - deploy-vps.sudoers
+      - manual-deploy.sh
       - .github/workflows/deploy.yml
   workflow_dispatch:
 
@@ -24,14 +26,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
+    timeout-minutes: 10
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -40,23 +43,103 @@ jobs:
       - name: Build CSS
         run: npm run build
 
-      - name: Configure SSH
+      - name: Verify deployment assets
+        id: assets
+        run: |
+          test -s index.html
+          test -s style.css
+          printf 'index_sha=%s\n' "$(sha256sum index.html | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+          printf 'css_sha=%s\n' "$(sha256sum style.css | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+
+      - name: Validate deployment secrets
         env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           SSH_KNOWN_HOSTS: ${{ secrets.VPS_SSH_KNOWN_HOSTS }}
         run: |
+          missing=0
+          for name in VPS_HOST VPS_USER SSH_PRIVATE_KEY SSH_KNOWN_HOSTS; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::$name is not configured in the production Environment"
+              missing=1
+            fi
+          done
+          (( missing == 0 ))
+
+          [[ "$VPS_HOST" =~ ^[A-Za-z0-9][A-Za-z0-9.-]*$ ]] || {
+            echo "::error::VPS_HOST contains unsupported characters"
+            exit 1
+          }
+          [[ "$VPS_USER" == "vps" ]] || {
+            echo "::error::VPS_USER must be the verified deployment user: vps"
+            exit 1
+          }
+
+      - name: Configure SSH
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          SSH_PRIVATE_KEY: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.VPS_SSH_KNOWN_HOSTS }}
+        run: |
+          umask 077
           install -d -m 700 ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
+          printf '%s\n' "$SSH_PRIVATE_KEY" | sed 's/\r$//' > ~/.ssh/wavbits_deploy
+          printf '%s\n' "$SSH_KNOWN_HOSTS" | sed 's/\r$//' > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/wavbits_deploy ~/.ssh/known_hosts
+
+          ssh-keygen -y -f ~/.ssh/wavbits_deploy >/dev/null || {
+            echo "::error::VPS_SSH_PRIVATE_KEY is not a valid private key"
+            exit 1
+          }
+          ssh-keygen -F "$VPS_HOST" -f ~/.ssh/known_hosts >/dev/null || {
+            echo "::error::VPS_SSH_KNOWN_HOSTS has no entry for VPS_HOST"
+            exit 1
+          }
+
+      - name: Test SSH and deployment command
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh_options=(
+            -i ~/.ssh/wavbits_deploy
+            -o BatchMode=yes
+            -o IdentitiesOnly=yes
+            -o StrictHostKeyChecking=yes
+            -o UserKnownHostsFile=~/.ssh/known_hosts
+            -o ConnectTimeout=15
+          )
+          ssh "${ssh_options[@]}" "$VPS_USER@$VPS_HOST" \
+            'test "$(id -un)" = vps && sudo -n /usr/local/sbin/deploy-wavbits --check'
 
       - name: Upload and deploy
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
-          REMOTE_DIR: /tmp/wavbits-web-${{ github.sha }}
+          INDEX_SHA: ${{ steps.assets.outputs.index_sha }}
+          CSS_SHA: ${{ steps.assets.outputs.css_sha }}
         run: |
-          ssh "$VPS_USER@$VPS_HOST" "install -d -m 700 '$REMOTE_DIR'"
-          scp index.html style.css deploy-vps.sh "$VPS_USER@$VPS_HOST:$REMOTE_DIR/"
-          ssh "$VPS_USER@$VPS_HOST" "sudo bash '$REMOTE_DIR/deploy-vps.sh'; rm -rf '$REMOTE_DIR'"
+          remote_dir="/home/vps/wavbits-web-deploy-$GITHUB_SHA"
+          ssh_options=(
+            -i ~/.ssh/wavbits_deploy
+            -o BatchMode=yes
+            -o IdentitiesOnly=yes
+            -o StrictHostKeyChecking=yes
+            -o UserKnownHostsFile=~/.ssh/known_hosts
+            -o ConnectTimeout=15
+          )
+
+          cleanup_remote() {
+            ssh "${ssh_options[@]}" "$VPS_USER@$VPS_HOST" \
+              "rm -f '$remote_dir/index.html' '$remote_dir/style.css'; rmdir '$remote_dir' 2>/dev/null || true" \
+              || true
+          }
+          trap cleanup_remote EXIT
+
+          ssh "${ssh_options[@]}" "$VPS_USER@$VPS_HOST" \
+            "install -d -m 700 '$remote_dir'"
+          scp "${ssh_options[@]}" index.html style.css \
+            "$VPS_USER@$VPS_HOST:$remote_dir/"
+          ssh "${ssh_options[@]}" "$VPS_USER@$VPS_HOST" \
+            "chmod 600 '$remote_dir/index.html' '$remote_dir/style.css' && sudo -n /usr/local/sbin/deploy-wavbits '$GITHUB_SHA' '$INDEX_SHA' '$CSS_SHA'"
