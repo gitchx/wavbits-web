@@ -6,6 +6,9 @@ deploy_host="${WAVBITS_DEPLOY_HOST:-vps@vps.wavbits.com}"
 commit_sha="$(git -C "$project_dir" rev-parse --verify HEAD)"
 remote_dir="/home/vps/wavbits-web-deploy-${commit_sha:0:12}"
 
+npm --prefix "$project_dir" ci
+npm --prefix "$project_dir" run build
+
 ssh -o BatchMode=yes "$deploy_host" "install -d -m 700 '$remote_dir'"
 scp \
   "$project_dir/index.html" \

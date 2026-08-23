@@ -1,0 +1,15 @@
+{
+  "name": "wavbits-web",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./style.css --minify",
+    "dev": "tailwindcss -i ./src/input.css -o ./style.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.0",
+    "tailwindcss": "^4.3.0"
+  }
+}
