@@ -95,6 +95,19 @@
     transform: translate(2px, -2px);
   }
 
+  .draft-item,
+  .draft-item:hover {
+    @apply cursor-default border-line bg-transparent text-archived;
+  }
+
+  .draft-item .link-description {
+    @apply text-[#969690];
+  }
+
+  .draft-label {
+    @apply shrink-0 font-mono text-[0.7rem] font-semibold tracking-[0.12em] text-muted;
+  }
+
   .link-item:focus-visible,
   .brand:focus-visible {
     @apply outline-2 outline-offset-4 outline-ink;
