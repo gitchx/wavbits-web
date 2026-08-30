@@ -1,4 +1,5 @@
-@import "tailwindcss" source("../");
+@import "tailwindcss" source("./");
+@source inline("contents");
 
 @theme {
   --color-page: #fafaf8;

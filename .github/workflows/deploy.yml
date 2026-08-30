@@ -4,14 +4,15 @@ on:
   push:
     branches: [main]
     paths:
-      - index.html
-      - src/input.css
-      - style.css
+      - src/**
+      - public/**
+      - astro.config.mjs
       - package.json
       - package-lock.json
       - deploy-vps.sh
       - deploy-vps.sudoers
       - manual-deploy.sh
+      - scripts/**
       - .github/workflows/deploy.yml
   workflow_dispatch:
 
@@ -40,16 +41,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build CSS
+      - name: Build site
         run: npm run build
 
-      - name: Verify deployment assets
+      - name: Package and verify deployment assets
         id: assets
         run: |
-          test -s index.html
-          test -s style.css
-          printf 'index_sha=%s\n' "$(sha256sum index.html | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
-          printf 'css_sha=%s\n' "$(sha256sum style.css | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+          test -s dist/index.html
+          test -s dist/style.css
+          test -s dist/admin/index.html
+          test -s dist/admin/config.yml
+          test -s dist/admin/oauth.php
+          test -s dist/admin/auth.php
+          test -s dist/admin/callback.php
+          tar -C dist -czf wavbits-web-release.tar.gz .
+          printf 'release_sha=%s\n' "$(sha256sum wavbits-web-release.tar.gz | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
 
       - name: Validate deployment secrets
         env:
@@ -117,8 +123,7 @@ jobs:
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
-          INDEX_SHA: ${{ steps.assets.outputs.index_sha }}
-          CSS_SHA: ${{ steps.assets.outputs.css_sha }}
+          RELEASE_SHA: ${{ steps.assets.outputs.release_sha }}
         run: |
           remote_dir="/home/vps/wavbits-web-deploy-$GITHUB_SHA"
           ssh_options=(
@@ -132,14 +137,14 @@ jobs:
 
           cleanup_remote() {
             ssh "${ssh_options[@]}" "$VPS_USER@$VPS_HOST" \
-              "rm -f '$remote_dir/index.html' '$remote_dir/style.css'; rmdir '$remote_dir' 2>/dev/null || true" \
+              "rm -f '$remote_dir/wavbits-web-release.tar.gz'; rmdir '$remote_dir' 2>/dev/null || true" \
               || true
           }
           trap cleanup_remote EXIT
 
           ssh "${ssh_options[@]}" "$VPS_USER@$VPS_HOST" \
             "install -d -m 700 '$remote_dir'"
-          scp "${ssh_options[@]}" index.html style.css \
+          scp "${ssh_options[@]}" wavbits-web-release.tar.gz \
             "$VPS_USER@$VPS_HOST:$remote_dir/"
           ssh "${ssh_options[@]}" "$VPS_USER@$VPS_HOST" \
-            "chmod 600 '$remote_dir/index.html' '$remote_dir/style.css' && sudo -n /usr/local/sbin/deploy-wavbits '$GITHUB_SHA' '$INDEX_SHA' '$CSS_SHA'"
+            "chmod 600 '$remote_dir/wavbits-web-release.tar.gz' && sudo -n /usr/local/sbin/deploy-wavbits '$GITHUB_SHA' '$RELEASE_SHA'"

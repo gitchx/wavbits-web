@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "title": "wavbits — music, audio & software",
+    "description": "wavbitsの音楽、ボーカルミックス、オーディオDSP、ソフトウェア開発活動への入口。",
+    "themeColor": "#fafaf8"
+  },
+  "brand": "wavbits",
+  "tagline": "music, audio & software",
+  "sections": [
+    {
+      "id": "vocal-mixing",
+      "title": "Vocal Mixing",
+      "description": "歌ってみたミックス",
+      "descriptionLang": "ja",
+      "archived": false,
+      "items": [
+        {
+          "title": "Mixing",
+          "description": "ミックスのみ",
+          "descriptionLang": "ja",
+          "status": "準備中",
+          "external": false
+        },
+        {
+          "title": "Recording & Mixing",
+          "description": "レコーディングとミックス",
+          "descriptionLang": "ja",
+          "status": "準備中",
+          "external": false
+        }
+      ]
+    },
+    {
+      "id": "dsp",
+      "title": "DSP",
+      "description": "Audio DSP / Plugin Development",
+      "archived": false,
+      "items": [
+        {
+          "title": "dsp.wavbits.com",
+          "url": "https://dsp.wavbits.com",
+          "external": true
+        }
+      ]
+    },
+    {
+      "id": "linux",
+      "title": "Linux",
+      "description": "Linux Music Production / DTM",
+      "archived": false,
+      "items": [
+        {
+          "title": "Linux Music Production",
+          "status": "準備中",
+          "external": false
+        }
+      ]
+    },
+    {
+      "id": "blog",
+      "title": "Blog",
+      "description": "Music Production / Development",
+      "archived": false,
+      "items": [
+        {
+          "title": "Music & Development Blog",
+          "status": "準備中",
+          "external": false
+        }
+      ]
+    },
+    {
+      "id": "archived",
+      "title": "Archived",
+      "description": "Past projects and experiments",
+      "archived": true,
+      "items": [
+        {
+          "title": "Software",
+          "description": "Max/MSP and other projects",
+          "status": "準備中",
+          "external": false
+        }
+      ]
+    }
+  ],
+  "footer": "© wavbits"
+}

@@ -1,0 +1,70 @@
+---
+import home from "../data/home.json";
+
+const { meta, brand, tagline, sections, footer } = home;
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={meta.description} />
+    <meta name="theme-color" content={meta.themeColor} />
+    <title>{meta.title}</title>
+    <link rel="stylesheet" href="style.css?v=ed586ac1" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="wavbits ホーム">{brand}</a>
+        <p class="tagline">{tagline}</p>
+      </header>
+
+      <main>
+        {
+          sections.map((section, sectionIndex) => (
+            <section
+              class:list={["section", { archived: section.archived }]}
+              aria-labelledby={`${section.id}-title`}
+            >
+              <div class="section-heading">
+                {sectionIndex === 0
+                  ? <h1 id={`${section.id}-title`}>{section.title}</h1>
+                  : <h2 id={`${section.id}-title`}>{section.title}</h2>}
+                <p lang={section.descriptionLang}>{section.description}</p>
+              </div>
+              <div class:list={{ "link-list": section.items.length > 1 }}>
+                {section.items.map((item) => (
+                  item.url && !item.status ? (
+                    <a class="link-item" href={item.url}>
+                      <span>
+                        <span class="link-title">{item.title}</span>
+                        {item.description && (
+                          <span class="link-description" lang={item.descriptionLang}>{item.description}</span>
+                        )}
+                      </span>
+                      <span class="arrow" aria-hidden="true">{item.external ? "↗" : "→"}</span>
+                    </a>
+                  ) : (
+                    <div class="link-item draft-item">
+                      <span>
+                        <span class="link-title">{item.title}</span>
+                        {item.description && (
+                          <span class="link-description" lang={item.descriptionLang}>{item.description}</span>
+                        )}
+                      </span>
+                      {item.status && <span class="draft-label" lang="ja">{item.status}</span>}
+                    </div>
+                  )
+                ))}
+              </div>
+            </section>
+          ))
+        }
+      </main>
+
+      <footer><p>{footer}</p></footer>
+    </div>
+  </body>
+</html>

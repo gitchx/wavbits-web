@@ -1,0 +1,95 @@
+backend:
+  name: github
+  repo: gitchx/wavbits-web
+  branch: main
+  base_url: https://wavbits.com
+  auth_endpoint: admin/auth.php
+  auth_scope: public_repo
+  site_domain: wavbits.com
+  commit_messages:
+    create: 'content: create "{{slug}}"'
+    update: 'content: update "{{slug}}"'
+    delete: 'content: delete "{{slug}}"'
+    uploadMedia: 'content: upload "{{path}}"'
+    deleteMedia: 'content: delete "{{path}}"'
+
+publish_mode: simple
+local_backend: true
+locale: ja
+site_url: https://wavbits.com
+display_url: https://wavbits.com
+media_folder: public/uploads
+public_folder: /uploads
+show_preview_links: true
+
+slug:
+  encoding: unicode
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: site
+    label: サイト
+    description: wavbits.comのホーム画面を管理します。
+    files:
+      - label: Home
+        name: home
+        file: src/data/home.json
+        fields:
+          - label: メタ情報
+            name: meta
+            widget: object
+            fields:
+              - { label: ページタイトル, name: title, widget: string }
+              - { label: ページ説明, name: description, widget: text }
+              - { label: テーマカラー, name: themeColor, widget: color, allowInput: true }
+          - { label: サイト名, name: brand, widget: string }
+          - { label: タグライン, name: tagline, widget: string }
+          - label: セクション
+            name: sections
+            widget: list
+            min: 1
+            summary: "{{fields.title}}"
+            fields:
+              - label: ID
+                name: id
+                widget: string
+                pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 半角小文字・数字・ハイフンで入力してください。]
+                hint: ページ内の見出しIDとして使います。ほかのセクションと重複させないでください。
+              - { label: 見出し, name: title, widget: string }
+              - { label: 説明, name: description, widget: string }
+              - label: 説明の言語
+                name: descriptionLang
+                widget: select
+                required: false
+                options:
+                  - { label: 日本語, value: ja }
+                  - { label: English, value: en }
+              - { label: アーカイブ表示, name: archived, widget: boolean, default: false }
+              - label: リンク・項目
+                name: items
+                widget: list
+                min: 1
+                summary: "{{fields.title}}"
+                fields:
+                  - { label: 名前, name: title, widget: string }
+                  - { label: 説明, name: description, widget: string, required: false }
+                  - label: 説明の言語
+                    name: descriptionLang
+                    widget: select
+                    required: false
+                    options:
+                      - { label: 日本語, value: ja }
+                      - { label: English, value: en }
+                  - label: URL
+                    name: url
+                    widget: string
+                    required: false
+                    hint: 公開する項目だけ入力します。準備中の場合は空欄にしてください。
+                  - label: 状態ラベル
+                    name: status
+                    widget: string
+                    required: false
+                    hint: 「準備中」など。URLを公開するときは空欄にしてください。
+                  - { label: 外部リンク, name: external, widget: boolean, default: false }
+          - { label: フッター, name: footer, widget: string }
