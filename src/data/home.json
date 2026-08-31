@@ -10,14 +10,14 @@
     {
       "id": "vocal-mixing",
       "title": "Vocal Mixing",
-      "headingHidden": false,
+      "headingHidden": true,
       "description": "歌ってみたミックス",
       "descriptionLang": "ja",
       "archived": false,
       "items": [
         {
           "title": "Mixing",
-          "hidden": false,
+          "hidden": true,
           "description": "ミックスのみ",
           "descriptionLang": "ja",
           "status": "準備中",
@@ -25,7 +25,7 @@
         },
         {
           "title": "Recording & Mixing",
-          "hidden": false,
+          "hidden": true,
           "description": "レコーディングとミックス",
           "descriptionLang": "ja",
           "status": "準備中",
