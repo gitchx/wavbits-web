@@ -2,10 +2,12 @@
 import home from "../data/home.json";
 
 const { meta, brand, tagline, sections, footer } = home;
-const sectionsWithVisibleItems = sections.map((section) => ({
-  ...section,
-  items: section.items.filter((item) => !item.hidden),
-}));
+const sectionsWithVisibleItems = sections
+  .map((section) => ({
+    ...section,
+    items: section.items.filter((item) => !item.hidden),
+  }))
+  .filter((section) => !section.headingHidden || section.items.length > 0);
 const firstVisibleHeadingIndex = sectionsWithVisibleItems.findIndex(
   (section) => !section.headingHidden,
 );
