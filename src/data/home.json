@@ -81,7 +81,7 @@
     {
       "id": "archived",
       "title": "Archived",
-      "headingHidden": true,
+      "headingHidden": false,
       "description": "Past projects and experiments",
       "archived": false,
       "items": [
@@ -90,7 +90,8 @@
           "hidden": false,
           "description": "Max/MSP and other projects",
           "status": "",
-          "external": true
+          "external": false,
+          "url": "https://somak.netlify.app/"
         }
       ]
     }
