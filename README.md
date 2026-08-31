@@ -33,10 +33,10 @@ Astroのproduction buildは `dist/` に生成されます。
 - ページタイトル、説明、テーマカラー
 - サイト名、タグライン、フッター
 - Homeのセクション
-- 各セクションのリンク、説明、準備中ラベル
+- 各セクションのリンク、説明、準備中ラベル、非表示設定
 - `public/uploads/` に保存するメディア
 
-現行サイトにはMarkdown記事がないため、CMS導入だけを目的とした記事形式への変更は行っていません。既存のHome内容を `src/data/home.json` へ移し、Decap CMSのfile collectionで管理します。セクションと項目はlist fieldなので、新規追加と並べ替えが可能です。
+現行サイトにはMarkdown記事がないため、CMS導入だけを目的とした記事形式への変更は行っていません。既存のHome内容を `src/data/home.json` へ移し、Decap CMSのfile collectionで管理します。セクションと項目はlist fieldなので、新規追加と並べ替えが可能です。項目の「非表示」をオンにすると、内容を削除せず公開ページから一時的に隠せます。
 
 保存すると `gitchx/wavbits-web` の `main` ブランチへ直接コミットされます。対象ファイルへのpushは既存のGitHub Actionsを起動し、production build後に本番VPSへ反映します。
 

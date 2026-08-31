@@ -73,6 +73,11 @@ collections:
                 summary: "{{fields.title}}"
                 fields:
                   - { label: 名前, name: title, widget: string }
+                  - label: 非表示
+                    name: hidden
+                    widget: boolean
+                    default: false
+                    hint: オンにすると、内容を残したまま公開ページではこの項目を表示しません。
                   - { label: 説明, name: description, widget: string, required: false }
                   - label: 説明の言語
                     name: descriptionLang

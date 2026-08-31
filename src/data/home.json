@@ -16,6 +16,7 @@
       "items": [
         {
           "title": "Mixing",
+          "hidden": false,
           "description": "ミックスのみ",
           "descriptionLang": "ja",
           "status": "準備中",
@@ -23,6 +24,7 @@
         },
         {
           "title": "Recording & Mixing",
+          "hidden": false,
           "description": "レコーディングとミックス",
           "descriptionLang": "ja",
           "status": "準備中",
@@ -38,6 +40,7 @@
       "items": [
         {
           "title": "dsp.wavbits.com",
+          "hidden": false,
           "url": "https://dsp.wavbits.com",
           "external": true
         }
@@ -51,6 +54,7 @@
       "items": [
         {
           "title": "Linux Music Production",
+          "hidden": false,
           "status": "準備中",
           "external": false
         }
@@ -64,6 +68,7 @@
       "items": [
         {
           "title": "Music & Development Blog",
+          "hidden": false,
           "status": "準備中",
           "external": false
         }
@@ -77,6 +82,7 @@
       "items": [
         {
           "title": "Software",
+          "hidden": false,
           "description": "Max/MSP and other projects",
           "status": "準備中",
           "external": false

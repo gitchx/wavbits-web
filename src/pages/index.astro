@@ -2,6 +2,10 @@
 import home from "../data/home.json";
 
 const { meta, brand, tagline, sections, footer } = home;
+const sectionsWithVisibleItems = sections.map((section) => ({
+  ...section,
+  items: section.items.filter((item) => !item.hidden),
+}));
 ---
 
 <!doctype html>
@@ -23,7 +27,7 @@ const { meta, brand, tagline, sections, footer } = home;
 
       <main>
         {
-          sections.map((section, sectionIndex) => (
+          sectionsWithVisibleItems.map((section, sectionIndex) => (
             <section
               class:list={["section", { archived: section.archived }]}
               aria-labelledby={`${section.id}-title`}
@@ -34,31 +38,33 @@ const { meta, brand, tagline, sections, footer } = home;
                   : <h2 id={`${section.id}-title`}>{section.title}</h2>}
                 <p lang={section.descriptionLang}>{section.description}</p>
               </div>
-              <div class:list={{ "link-list": section.items.length > 1 }}>
-                {section.items.map((item) => (
-                  item.url && !item.status ? (
-                    <a class="link-item" href={item.url}>
-                      <span>
-                        <span class="link-title">{item.title}</span>
-                        {item.description && (
-                          <span class="link-description" lang={item.descriptionLang}>{item.description}</span>
-                        )}
-                      </span>
-                      <span class="arrow" aria-hidden="true">{item.external ? "↗" : "→"}</span>
-                    </a>
-                  ) : (
-                    <div class="link-item draft-item">
-                      <span>
-                        <span class="link-title">{item.title}</span>
-                        {item.description && (
-                          <span class="link-description" lang={item.descriptionLang}>{item.description}</span>
-                        )}
-                      </span>
-                      {item.status && <span class="draft-label" lang="ja">{item.status}</span>}
-                    </div>
-                  )
-                ))}
-              </div>
+              {section.items.length > 0 && (
+                <div class:list={{ "link-list": section.items.length > 1 }}>
+                  {section.items.map((item) => (
+                    item.url && !item.status ? (
+                      <a class="link-item" href={item.url}>
+                        <span>
+                          <span class="link-title">{item.title}</span>
+                          {item.description && (
+                            <span class="link-description" lang={item.descriptionLang}>{item.description}</span>
+                          )}
+                        </span>
+                        <span class="arrow" aria-hidden="true">{item.external ? "↗" : "→"}</span>
+                      </a>
+                    ) : (
+                      <div class="link-item draft-item">
+                        <span>
+                          <span class="link-title">{item.title}</span>
+                          {item.description && (
+                            <span class="link-description" lang={item.descriptionLang}>{item.description}</span>
+                          )}
+                        </span>
+                        {item.status && <span class="draft-label" lang="ja">{item.status}</span>}
+                      </div>
+                    )
+                  ))}
+                </div>
+              )}
             </section>
           ))
         }
