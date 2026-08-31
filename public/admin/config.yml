@@ -57,6 +57,11 @@ collections:
                 pattern: ['^[a-z0-9]+(?:-[a-z0-9]+)*$', 半角小文字・数字・ハイフンで入力してください。]
                 hint: ページ内の見出しIDとして使います。ほかのセクションと重複させないでください。
               - { label: 見出し, name: title, widget: string }
+              - label: 見出しを非表示
+                name: headingHidden
+                widget: boolean
+                default: false
+                hint: オンにすると、リンク・項目を残したまま見出しと説明を公開ページでは表示しません。
               - { label: 説明, name: description, widget: string }
               - label: 説明の言語
                 name: descriptionLang

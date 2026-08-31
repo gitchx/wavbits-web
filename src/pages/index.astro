@@ -6,6 +6,9 @@ const sectionsWithVisibleItems = sections.map((section) => ({
   ...section,
   items: section.items.filter((item) => !item.hidden),
 }));
+const firstVisibleHeadingIndex = sectionsWithVisibleItems.findIndex(
+  (section) => !section.headingHidden,
+);
 ---
 
 <!doctype html>
@@ -30,14 +33,17 @@ const sectionsWithVisibleItems = sections.map((section) => ({
           sectionsWithVisibleItems.map((section, sectionIndex) => (
             <section
               class:list={["section", { archived: section.archived }]}
-              aria-labelledby={`${section.id}-title`}
+              aria-labelledby={section.headingHidden ? undefined : `${section.id}-title`}
+              aria-label={section.headingHidden ? section.title : undefined}
             >
-              <div class="section-heading">
-                {sectionIndex === 0
-                  ? <h1 id={`${section.id}-title`}>{section.title}</h1>
-                  : <h2 id={`${section.id}-title`}>{section.title}</h2>}
-                <p lang={section.descriptionLang}>{section.description}</p>
-              </div>
+              {!section.headingHidden && (
+                <div class="section-heading">
+                  {sectionIndex === firstVisibleHeadingIndex
+                    ? <h1 id={`${section.id}-title`}>{section.title}</h1>
+                    : <h2 id={`${section.id}-title`}>{section.title}</h2>}
+                  <p lang={section.descriptionLang}>{section.description}</p>
+                </div>
+              )}
               {section.items.length > 0 && (
                 <div class:list={{ "link-list": section.items.length > 1 }}>
                   {section.items.map((item) => (

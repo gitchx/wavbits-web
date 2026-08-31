@@ -10,6 +10,7 @@
     {
       "id": "vocal-mixing",
       "title": "Vocal Mixing",
+      "headingHidden": false,
       "description": "歌ってみたミックス",
       "descriptionLang": "ja",
       "archived": false,
@@ -35,6 +36,7 @@
     {
       "id": "dsp",
       "title": "DSP",
+      "headingHidden": false,
       "description": "Audio DSP / Plugin Development",
       "archived": false,
       "items": [
@@ -49,6 +51,7 @@
     {
       "id": "linux",
       "title": "Linux",
+      "headingHidden": false,
       "description": "Linux Music Production / DTM",
       "archived": false,
       "items": [
@@ -63,6 +66,7 @@
     {
       "id": "blog",
       "title": "Blog",
+      "headingHidden": false,
       "description": "Music Production / Development",
       "archived": false,
       "items": [
@@ -77,6 +81,7 @@
     {
       "id": "archived",
       "title": "Archived",
+      "headingHidden": false,
       "description": "Past projects and experiments",
       "archived": true,
       "items": [
