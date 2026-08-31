@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "wavbits — music, audio & software",
-    "description": "wavbitsの音楽、ボーカルミックス、オーディオDSP、ソフトウェア開発活動への入口。",
+    "description": "wavbits - 音楽制作、オーディオDSP、ソフトウェア開発",
     "themeColor": "#fafaf8"
   },
   "brand": "wavbits",
@@ -81,16 +81,16 @@
     {
       "id": "archived",
       "title": "Archived",
-      "headingHidden": false,
+      "headingHidden": true,
       "description": "Past projects and experiments",
-      "archived": true,
+      "archived": false,
       "items": [
         {
           "title": "Software",
           "hidden": false,
           "description": "Max/MSP and other projects",
-          "status": "準備中",
-          "external": false
+          "status": "",
+          "external": true
         }
       ]
     }
